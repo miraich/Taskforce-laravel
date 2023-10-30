@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Moscow',
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------
@@ -163,9 +163,11 @@ return [
         /*
          * Application Service Providers...
          */
+//        App\Providers\ParserServiceProvider::class,
+//        Laravelrus\LocalizedCarbon\LocalizedCarbonServiceProvider::class,
+//        'Lrgt\LaravelFormAjaxValidation\LaravelFormAjaxValidationServiceProvider',
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
@@ -182,7 +184,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+//        'LocalizedCarbon' => Laravelrus\LocalizedCarbon\LocalizedCarbon::class,
+//        'DiffFormatter' => Laravelrus\LocalizedCarbon\DiffFactoryFacade::class,
     ])->toArray(),
 
 ];

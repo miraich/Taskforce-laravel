@@ -20,7 +20,7 @@ class ParserServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        $parser = new Csv_parser();
-//        $parser->importCsv();
+        $parser = new Csv_parser();
+        $parser->importCsv();
     }
 }

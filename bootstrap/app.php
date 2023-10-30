@@ -27,6 +27,11 @@ $app = new Illuminate\Foundation\Application(
 */
 
 $app->singleton(
+    Illuminate\Support\Facades\DB::class,
+    \App\Helpers\CSV_parser\Csv_parser::class,
+);
+
+$app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     App\Http\Kernel::class
 );
