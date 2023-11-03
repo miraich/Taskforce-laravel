@@ -2,10 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    @yield('stars-js')
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
+    @yield('stars-js')
+    @yield('suggest-js')
+    @yield('y-maps-js')
 </head>
 <body>
 @auth()
@@ -65,4 +67,6 @@
     @yield('content')
 </main>
 </body>
+@yield('suggest-js-script')
+@yield('view-y-map-js')
 </html>

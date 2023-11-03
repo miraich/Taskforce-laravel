@@ -22,7 +22,13 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            'title' => 'required|string|min:10|max:40',
+            'description' => 'required|string|min:10|max:150',
+            'category' => 'exists:categories,id',
+            'address' => 'nullable|string',
+            'budget' => 'required|integer|min:500',
+            'deadline' => 'required|date|after_or_equal:' . now()->format('d-m-Y H:i:s'),
+            'files' => 'sometimes',
         ];
     }
 }

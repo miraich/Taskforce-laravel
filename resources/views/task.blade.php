@@ -6,6 +6,12 @@
     <script src="https://kit.fontawesome.com/bc693717e3.js" crossorigin="anonymous"></script>
 @endsection
 
+@section('y-maps-js')
+    <script src="https://api-maps.yandex.ru/2.1/?be1bd94b-85a3-451f-b5b8-1dd420c530bd&lang=ru_RU"
+            type="text/javascript">
+    </script>
+@endsection
+
 @section('content')
     <div class="left-column">
         <div class="head-wrapper">
@@ -15,16 +21,39 @@
         <p class="task-description">
             {{$task->description}}</p>
 
-        <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
-        <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
-        <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>
-        <a href="#" class="button button--blue action-btn" data-action="deny">Отменить задание</a>
+        @switch(\Illuminate\Support\Facades\Auth::user()->role_id)
+            @case(\App\Enums\RolesEnum::CLIENT->value)
+                @switch($task->status_id)
+                    @case($task->status_id===\App\Enums\StatusesEnum::STATUS_NEW->value and $task->client_id===\Illuminate\Support\Facades\Auth::user()->id)
+                        <a href="#" class="button button--blue action-btn" data-action="deny">Отменить задание</a>
+                        @break
+                    @case($task->status_id===\App\Enums\StatusesEnum::IN_PROGRESS->value and $task->client_id===\Illuminate\Support\Facades\Auth::user()->id)
+                        <a href="#" class="button button--pink action-btn" data-action="completion">Завершить
+                            задание</a>
+                @endswitch
+                @break
+            @case(\App\Enums\RolesEnum::EXECUTOR->value)
+                @switch($task->status_id)
+                    @case($task->status_id===\App\Enums\StatusesEnum::STATUS_NEW->value and \Illuminate\Support\Facades\Auth::user()->role_id===2 )
+                        <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться
+                            на
+                            задание</a>
+                        @break
+                    @case($task->status_id===\App\Enums\StatusesEnum::IN_PROGRESS->value and \Illuminate\Support\Facades\Auth::user()->id===$task->executor_id)
+                        <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от
+                            задания</a>
+                @endswitch
+        @endswitch
 
-        <div class="task-map">
-            <img class="map" src="img/map.png" width="725" height="346" alt="{{$task->address}}">
-            <p class="map-address town">{{$task->address}}</p>
-            <p class="map-address">{{$task->city->name}}</p>
-        </div>
+        @if($task->city_id)
+            <div class="task-map">
+                <div id="YMapsID" style="width: 725px; height: 346px;"></div>
+                <p class="map-address town">{{$task->address}}</p>
+                @if($task->city)
+                    <p class="map-address">{{$task->city->name}}</p>
+                @endif
+            </div>
+        @endif
         <h4 class="head-regular">Отклики на задание</h4>
         @foreach($responses as $response)
             <div class="response-card">
@@ -33,7 +62,8 @@
                     <a href="#" class="link link--block link--big">name</a>
                     <div class="response-wrapper">
                         <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span
-                                class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span>
+                                class="fill-star">&nbsp;</span><span
+                                class="fill-star">&nbsp;</span><span>&nbsp;</span>
                         </div>
                         <p class="reviews">2 отзыва</p>
                     </div>
@@ -68,19 +98,19 @@
                 <dd>{{$task->status->name}}</dd>
             </dl>
         </div>
-        <div class="right-card white file-card">
-            <h4 class="head-card">Файлы задания</h4>
-            <ul class="enumeration-list">
-                <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">my_picture.jpg</a>
-                    <p class="file-size">356 Кб</p>
-                </li>
-                <li class="enumeration-item">
-                    <a href="#" class="link link--block link--clip">information.docx</a>
-                    <p class="file-size">12 Кб</p>
-                </li>
-            </ul>
-        </div>
+        @if($task->files()->exists())
+            <div class="right-card white file-card">
+                <h4 class="head-card">Файлы задания</h4>
+                <ul class="enumeration-list">
+                    @foreach($files = $task->files as $file)
+                        <li class="enumeration-item">
+                            <a href="{{route('task.get_file',$file->file_path)}}"
+                               class="link link--block link--clip">{{$file->file_path}}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 
     <section class="pop-up pop-up--refusal pop-up--close">
@@ -157,3 +187,30 @@
     <script src="{{asset('assets/js/main.js')}}"></script>
     <script src="{{asset('assets/js/stars.js')}}"></script>
 @endsection('content')
+
+@section('view-y-map-js')
+    <script type="text/javascript">
+        ymaps.ready(function () {
+            var myMap = new ymaps.Map("YMapsID", {
+                center: [{{$task->lat}}, {{$task->long}}],
+                zoom: 16
+            });
+
+            var myGeoObject = new ymaps.GeoObject({
+                geometry: {
+                    type: "Point", // тип геометрии - точка
+                    coordinates: [{{$task->lat}}, {{$task->long}}] // координаты точки
+                }
+            });
+
+            myMap.geoObjects.add(myGeoObject);
+
+            myMap.controls.remove('trafficControl');
+            myMap.controls.remove('searchControl');
+            myMap.controls.remove('geolocationControl');
+            myMap.controls.remove('typeSelector');
+            myMap.controls.remove('fullscreenControl');
+            myMap.controls.remove('rulerControl');
+        });
+    </script>
+@endsection

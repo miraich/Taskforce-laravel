@@ -1,6 +1,6 @@
 <?php
 
-namespace public\Enums;
+namespace App\Enums;
 
 enum RolesEnum: int
 {

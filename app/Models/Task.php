@@ -30,6 +30,11 @@ class Task extends Model
 
     use HasFactory;
 
+    public function files(): HasMany
+    {
+        return $this->HasMany(File::class);
+    }
+
     public function status(): HasOne
     {
         return $this->hasOne(Status::class, 'id', 'status_id'); // тут тоже
