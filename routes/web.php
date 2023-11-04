@@ -25,13 +25,14 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/task/create', [\App\Http\Controllers\TaskController::class, 'showStore'])->name('task.show_store');
-
-    Route::post('/task/store', [\App\Http\Controllers\TaskController::class, 'store'])->name('task.store');
+    Route::get('/task/add', [\App\Http\Controllers\TaskController::class, 'showStore'])->name('task.show_store');
+    Route::post('/task/add', [\App\Http\Controllers\TaskController::class, 'store'])->name('task.store');
 
     Route::get('/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks.index');
     Route::post('/tasks', [\App\Http\Controllers\TaskController::class, 'index'])->name('tasks.send_filter');
     Route::get('/file/{name}', [\App\Http\Controllers\TaskController::class, 'get_file'])->name('task.get_file');
+
+    Route::post('/task/{task}', [\App\Http\Controllers\ResponseController::class, 'to_response'])->name('task.to_response');
 
     Route::get('/task/{task}', [\App\Http\Controllers\TaskController::class, 'show'])->name('task.show');
     Route::get('/user/{user}', [\App\Http\Controllers\UserController::class, 'show'])->name('user.show');

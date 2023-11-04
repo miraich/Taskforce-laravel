@@ -11,6 +11,8 @@ class File extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'task_id',
         'file_path',

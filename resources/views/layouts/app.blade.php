@@ -24,9 +24,11 @@
                     <li class="list-item">
                         <a href="#" class="link link--nav">Мои задания</a>
                     </li>
-                    <li class="list-item {{request()->routeIs('task.show_store') ? 'list-item--active' : '' }}">
-                        <a href="{{route('task.show_store')}}" class="link link--nav">Создать задание</a>
-                    </li>
+                    @if(\Illuminate\Support\Facades\Auth::user()->role_id===\App\Enums\RolesEnum::CLIENT->value)
+                        <li class="list-item {{request()->routeIs('task.show_store') ? 'list-item--active' : '' }}">
+                            <a href="{{route('task.show_store')}}" class="link link--nav">Создать задание</a>
+                        </li>
+                    @endif
                     <li class="list-item">
                         <a href="#" class="link link--nav">Настройки</a>
                     </li>

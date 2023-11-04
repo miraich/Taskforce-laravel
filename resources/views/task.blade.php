@@ -34,7 +34,7 @@
                 @break
             @case(\App\Enums\RolesEnum::EXECUTOR->value)
                 @switch($task->status_id)
-                    @case($task->status_id===\App\Enums\StatusesEnum::STATUS_NEW->value and \Illuminate\Support\Facades\Auth::user()->role_id===2 )
+                    @case($task->status_id===\App\Enums\StatusesEnum::STATUS_NEW->value and \Illuminate\Support\Facades\Auth::user()->role_id===2)
                         <a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться
                             на
                             задание</a>
@@ -49,21 +49,26 @@
             <div class="task-map">
                 <div id="YMapsID" style="width: 725px; height: 346px;"></div>
                 <p class="map-address town">{{$task->address}}</p>
-                @if($task->city)
-                    <p class="map-address">{{$task->city->name}}</p>
-                @endif
+                <p class="map-address">{{$task->city->name}}</p>
             </div>
         @endif
+
         <h4 class="head-regular">Отклики на задание</h4>
-        @foreach($responses as $response)
+        @foreach($task->responses as $response)
             <div class="response-card">
-                <img class="customer-photo" src="img/man-glasses.png" width="146" height="156" alt="Фото заказчиков">
+                <img class="customer-photo" src="img/man-glasses.png" width="146" height="156"
+                     alt="Фото заказчиков">
                 <div class="feedback-wrapper">
-                    <a href="#" class="link link--block link--big">name</a>
+                    @if($response->user->id===\Illuminate\Support\Facades\Auth::user()->id)
+                        <a href="#" class="link link--block link--big">{{$response->user->name.' | '.'Ваш отклик'}}</a>
+                    @else
+                        <a href="#" class="link link--block link--big">{{$response->user->name}}</a>
+                    @endif
                     <div class="response-wrapper">
-                        <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span
-                                class="fill-star">&nbsp;</span><span
-                                class="fill-star">&nbsp;</span><span>&nbsp;</span>
+                        <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span
+                                    class="fill-star">&nbsp;</span><span
+                                    class="fill-star">&nbsp;</span><span
+                                    class="fill-star">&nbsp;</span><span>&nbsp;</span>
                         </div>
                         <p class="reviews">2 отзыва</p>
                     </div>
@@ -74,15 +79,18 @@
                 </div>
                 <div class="feedback-wrapper">
                     <p class="info-text"><span
-                            class="current-time">{{$carbon->diffForHumans($response->created_at)}}</span></p>
+                                class="current-time">{{$carbon->diffForHumans($response->created_at)}}</span></p>
                     <p class="price price--small">{{$response->budget. ' ₽'}} </p>
                 </div>
-                <div class="button-popup">
-                    <a href="#" class="button button--blue button--small">Принять</a>
-                    <a href="#" class="button button--orange button--small">Отказать</a>
-                </div>
+                @if(\Illuminate\Support\Facades\Auth::user()->id===$task->client_id and $task->status_id===1 )
+                    <div class="button-popup">
+                        <a href="#" class="button button--blue button--small">Принять</a>
+                        <a href="#" class="button button--orange button--small">Отказать</a>
+                    </div>
+                @endif
             </div>
         @endforeach
+
     </div>
     <div class="right-column">
         <div class="right-card black info-card">
@@ -166,14 +174,21 @@
                 Пожалуйста, укажите стоимость работы и добавьте комментарий, если необходимо.
             </p>
             <div class="addition-form pop-up--form regular-form">
-                <form>
+                <form action="{{route('task.to_response',$task->id)}}" method="post">
+                    @csrf
                     <div class="form-group">
                         <label class="control-label" for="addition-comment">Ваш комментарий</label>
-                        <textarea id="addition-comment"></textarea>
+                        <textarea name="commentary" id="addition-comment"></textarea>
+                        @error('commentary')
+                        {{$message}}
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label class="control-label" for="addition-price">Стоимость</label>
-                        <input id="addition-price" type="text">
+                        <input name="budget" id="addition-price" type="text">
+                        @error('budget')
+                        {{$message}}
+                        @enderror
                     </div>
                     <input type="submit" class="button button--pop-up button--blue" value="Завершить">
                 </form>

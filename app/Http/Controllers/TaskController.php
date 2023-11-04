@@ -123,9 +123,7 @@ class TaskController extends Controller
     public
     function show(Task $task)
     {
-
         return view('task', [
-            'responses' => $task->responses,
             'task' => $task,
             'carbon' => Carbon::now(),
             'exp_date' => Carbon::parse($task->expiration_date, 'GMT')

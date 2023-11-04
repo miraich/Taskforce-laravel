@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('responses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('executor_id')->constrained('users');
+            $table->foreignId('executor_id')->unique()->constrained('users');
             $table->text('commentary');
             $table->integer('budget');
             $table->timestampsTz();

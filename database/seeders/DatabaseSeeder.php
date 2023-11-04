@@ -30,8 +30,6 @@ class DatabaseSeeder extends Seeder
             ['name'=>'Провалено'],
         ]);
 
-        User::factory(1)->create();
-
-        Task::factory(15)->create();
+        Task::factory(10)->create();
     }
 }

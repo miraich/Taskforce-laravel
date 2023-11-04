@@ -10,10 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('files', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('task_id')->constrained();
-            $table->string('file_path');
+        Schema::table('responses', function (Blueprint $table) {
+            $table->renameColumn('executor_id','user_id');
         });
     }
 
@@ -22,6 +20,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('files');
+        Schema::table('responses', function (Blueprint $table) {
+            $table->removeColumn('user_id');
+        });
     }
 };
